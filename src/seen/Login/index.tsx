@@ -39,7 +39,7 @@ const Login: FunctionComponent = () => {
 
   if (isError) {
     const err = error as Error;
-    return <p>Error: {err.message}</p>;
+    return <p>Error: {err.message ? 'please start the Json server or some one else' :err.message }</p>;
   }
 
   return (
