@@ -1,122 +1,105 @@
-import { FunctionComponent, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { Form, Input, Modal } from "antd";
+// import { useState } from "react";
+import background from "../../image/bg3.jpg";
+import {  useMutation } from "react-query";
 
-import "antd/dist/antd.min.css";
-import { Input } from "antd";
-import { LockOutlined } from "@ant-design/icons";
-import "./login.css";
-import { create, getAll } from "../../api/logInApi";
+import { create } from "../../api/logInApi";
 
-const Login: FunctionComponent = () => {
-  const [form, setForm] = useState({});
-  const queryClient = useQueryClient();
+const Login = () => {
+//   const [form, setForm] = useState({});
 
-  const { isLoading, isError, error } = useQuery("LogIns", getAll, {
-    select: (data) => data.sort((a: any, b: any) => b.id - a.id),
-  });
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    if (form) {
-      addTodoMutation.mutate(form);
-    }
-  };
-
-  const addTodoMutation = useMutation(create, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("LogIns");
+const SignInMutation = useMutation(create, {
+    onSuccess: (data:any) => {
+    //   queryClient.invalidateQueries("LogIns");
+    Modal.success({content:`${data.statusText} successfully`})
+    },
+    onError(error, variables, context) {
+        console.log(error, variables, context)
     },
   });
+ 
+  const onFinish = (values: any) => {
+    debugger;
+    if (values) {
+      SignInMutation.mutate(values);
 
-  const handleForm = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    }
   };
-
-  let content;
-  if (isLoading) {
-    content = <p>Loading...</p>;
-  }
-
-  if (isError) {
-    const err = error as Error;
-    return <p>Error: {err.message ? 'please start the Json server or some one else' :err.message }</p>;
-  }
-
   return (
-    <div className="pro-16">
-      <img className="pro-16-child" alt="" src="../group-1988.svg" />
-      <div className="pro-16-inner">
-        <div className="your-digital-business-is-in-go-parent">
-          <div className="your-digital-business">
-            Your digital business is in good hands with us!
+    <div
+      className="h-screen flex items-center justify-center  bg-cover bg-center bg-no-repeat bg-none"
+      style={{
+        backgroundImage: `url(${background})`,
+      }}
+    >
+      <div className="flex-1 ">
+        <div className="text-center relative">
+          <img
+            src="../eb-logo.png"
+            alt="broke"
+            className="absolute left-[18px] top-[-35px] bottom-[200px] w-10 sm:w-14 sm:left-[64px] sm:top-[-53px] md:w-16 md:left-[81px] md:top-[-58px]  lg:left-[145px] xl:left-[211px] 2xl:w-24  2xl:left-[220px] 2xl:top-[-90px] xl:top-[-61px]"
+          />
+
+          <b className=" text-sm bg-gradient-to-r from-blue-700 via-black to-blue-900 text-transparent bg-clip-text md:text-base 2xl:text-2xl">
+            Eccount Book
+          </b>
+          <h2 className="tracking-[-0.02em] font-bold md:text-lg 2xl:text-3xl">
+            Welcome back!
+          </h2>
+          <p className="text-xs md:text-sm 2xl:text-xl text-gray-600">
+            Welcome back! Please, Enter your details
+          </p>
+          <div className="flex justify-center">
+            {" "}
+            <Form
+              name="basic"
+              initialValues={{ remember: true }}
+              layout="vertical"
+              onFinish={onFinish}
+              //   onFinishFailed={onFinishFailed}
+              className="w-44 sm:w-60 md:w-72 lg:w-80 xl:w-96 2xl:w-[30rem] 2xl:pt-5 xl:pt-4 lg:pt-3 md:pt-2 sm:pt-2"
+              autoComplete="off"
+            >
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: "Please input your Email!" },
+                ]}
+              >
+                <Input placeholder="Enter Email" />
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" },
+                ]}
+              >
+                <Input.Password placeholder="Enter password" />
+              </Form.Item>
+
+              <button
+                type="submit"
+                className="w-[5rem] 2xl:w-[29rem] xl:w-[23rem] lg:w-[19rem] md:w-[17rem] sm:w-[13rem] hover:bg-[#8950d3] bg-[#7c3cce] text-white h-10 rounded-lg outline-none"
+              >
+                Login
+              </button>
+            </Form>
           </div>
-          <div className="make-your-work">
-            Make your work easier with an integrated ecosystem that lets all
-            departments work properly together.
-          </div>
         </div>
       </div>
-      <img className="eb-2-icon" alt="" src="../eb-1@1x.png" />
-      <strong className="copright-2023-eccount">
-        © copright 2023. Eccount Book
-      </strong>
-      <a className="google">
-        <img className="group-icon" alt="" src="../group.svg" />
-      </a>
-      <a className="linkedin">
-        <img className="vector-icon" alt="" src="../vector.svg" />
-      </a>
-      <a className="apple">
-        <img className="vector-icon1" alt="" src="../vector1.svg" />
-      </a>
-      <a className="facebook">
-        <img className="vector-icon2" alt="" src="../vector2.svg" />
-      </a>
-      <img className="eb-1-icon" alt="" src="../eb-11@1x.png" />
-      <strong className="eccount-book-wrapper">
-        <b className="eccount-book">Eccount Book</b>
-      </strong>
-      <div className="headline">
-        <div className="welcome-back">Welcome back!</div>
-        <div className="welcome-back-please">
-          Welcome back! Please, Enter your details
-        </div>
+
+      <div className=" flex-1 text-white text-center">
+        <h1 className="text-xs p-5 lg:px-14 sm:px-4   sm:text-sm lg:text-xl xl:text-2xl xl:px-20 2xl:text-3xl tracking-[-0.01em] leading-[120%] font-extrabold   subpixel-antialiased ">
+          Your digital business is in good hands with us!
+        </h1>
+        <p className=" text-[10px] px-4 sm:px-6 sm:text-xs md:px-7 md:text-sm lg:text-sm xl:text-sm lg:px-8 xl:px-14 2xl:text-base  tracking-[0.01em] leading-[155%] font-medium inline-block text-slate-200    subpixel-antialiased      ">
+          Make your work easier with an integrated ecosystem that lets all
+          departments work properly together.
+        </p>
       </div>
-      <label className="label">Email</label>
-      <Input
-        className="field"
-        type="text"
-        style={{ width: "400px" }}
-        size="middle"
-        name="email"
-        placeholder="Enter your email"
-        bordered={false}
-        onChange={handleForm}
-      />
-      <label className="label1">Password</label>
-      <Input.Password
-        className="field-antinputpassword"
-        style={{ width: "400px" }}
-        prefix={<LockOutlined />}
-        size="middle"
-        name="password"
-        placeholder="Input placeholder"
-        allowClear
-        bordered={false}
-        onChange={handleForm}
-      />
-      <div className="actions">
-        <div className="frame-parent">
-          <div className="frame-child" />
-          <h3 className="remember-for-30">Remember for 30 days</h3>
-        </div>
-        <a className="forgot-password">Forgot password</a>
-      </div>
-      <button className="button">
-        <b className="login" onClick={handleSubmit}>
-          Login
-        </b>
-      </button>
     </div>
   );
 };
